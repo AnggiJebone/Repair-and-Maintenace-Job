@@ -1,1 +1,408 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repair and Maintenance Job</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+  body { background:#f0f4f8; color:#1a202c; min-height:100vh; }
+  header { background:linear-gradient(135deg,#1e3a8a,#3b82f6); color:white; padding:15px 25px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.15); position:sticky; top:0; z-index:100; flex-wrap:wrap; gap:10px; }
+  header h1 { font-size:18px; display:flex; align-items:center; gap:10px; }
+  header .user-info { display:flex; align-items:center; gap:10px; font-size:13px; flex-wrap:wrap; }
+  .badge { background:rgba(255,255,255,0.2); padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; }
+  .container { max-width:1200px; margin:20px auto; padding:0 15px; }
+  .login-box { max-width:400px; margin:60px auto; background:white; padding:35px; border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,0.1); }
+  .login-box h2 { text-align:center; margin-bottom:25px; color:#1e3a8a; font-size:20px; }
+  .login-box .icon { text-align:center; font-size:60px; margin-bottom:15px; }
+  .form-group { margin-bottom:15px; }
+  .form-group label { display:block; margin-bottom:6px; font-weight:600; font-size:13px; color:#374151; }
+  .form-group input, .form-group select, .form-group textarea { width:100%; padding:11px 14px; border:2px solid #e5e7eb; border-radius:8px; font-size:14px; transition:0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,0.1); }
+  .form-group textarea { resize:vertical; min-height:80px; }
+  .btn { padding:11px 20px; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; transition:0.2s; display:inline-flex; align-items:center; gap:6px; justify-content:center; }
+  .btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+  .btn-primary { background:#3b82f6; color:white; }
+  .btn-success { background:#10b981; color:white; }
+  .btn-danger { background:#ef4444; color:white; }
+  .btn-warning { background:#f59e0b; color:white; }
+  .btn-secondary { background:#6b7280; color:white; }
+  .btn-block { width:100%; }
+  .btn-sm { padding:7px 10px; font-size:12px; }
+  .tabs { display:flex; gap:5px; background:white; padding:6px; border-radius:12px; margin-bottom:20px; overflow-x:auto; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+  .tab { padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; font-size:13px; color:#6b7280; transition:0.2s; white-space:nowrap; border:none; background:none; }
+  .tab.active { background:#3b82f6; color:white; }
+  .card { background:white; border-radius:12px; padding:22px; box-shadow:0 2px 10px rgba(0,0,0,0.05); margin-bottom:20px; }
+  .card h3 { margin-bottom:18px; color:#1e3a8a; font-size:16px; border-bottom:2px solid #f3f4f6; padding-bottom:10px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  table th { background:#f9fafb; padding:10px; text-align:left; font-weight:600; color:#374151; border-bottom:2px solid #e5e7eb; font-size:11px; text-transform:uppercase; }
+  table td { padding:10px; border-bottom:1px solid #f3f4f6; }
+  table tr:hover { background:#f9fafb; }
+  .status { padding:4px 10px; border-radius:20px; font-size:10px; font-weight:700; text-transform:uppercase; display:inline-block; }
+  .status-Selesai { background:#d1fae5; color:#065f46; }
+  .status-Proses { background:#fef3c7; color:#92400e; }
+  .status-Pending { background:#fee2e2; color:#991b1b; }
+  .alert { padding:12px 16px; border-radius:8px; margin-bottom:15px; font-size:13px; display:none; }
+  .alert.show { display:block; }
+  .alert-success { background:#d1fae5; color:#065f46; border-left:4px solid #10b981; }
+  .alert-error { background:#fee2e2; color:#991b1b; border-left:4px solid #ef4444; }
+  .alert-info { background:#dbeafe; color:#1e40af; border-left:4px solid #3b82f6; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:15px; }
+  @media(max-width:600px) { .grid-2 { grid-template-columns:1fr; } }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-bottom:20px; }
+  .stat-card { background:white; padding:15px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); text-align:center; }
+  .stat-card .num { font-size:26px; font-weight:800; color:#3b82f6; }
+  .stat-card .lbl { font-size:11px; color:#6b7280; margin-top:5px; }
+  .hidden { display:none !important; }
+  .table-wrap { overflow-x:auto; }
+  .empty { text-align:center; padding:30px; color:#9ca3af; }
+  .list-item { display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #f3f4f6; font-size:13px; }
+</style>
+</head>
+<body>
+
+<div id="loginPage">
+  <div class="login-box">
+    <div class="icon">🔧</div>
+    <h2>Repair & Maintenance Job</h2>
+    <div id="loginAlert" class="alert"></div>
+    <div class="form-group">
+      <label>Nama Anda</label>
+      <input type="text" id="loginName" placeholder="Masukkan nama lengkap">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="Admin isi password, User kosongkan">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="login()">🔐 Masuk</button>
+    <p style="text-align:center; font-size:11px; color:#9ca3af; margin-top:15px;">
+      Admin: isi password • User: kosongkan password
+    </p>
+  </div>
+</div>
+
+<div id="appPage" class="hidden">
+  <header>
+    <h1>🔧 <span id="hdrTitle">Repair & Maintenance Job</span></h1>
+    <div class="user-info">
+      <span class="badge" id="hdrRole">USER</span>
+      <span id="hdrName">-</span>
+      <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="globalAlert" class="alert"></div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="form" onclick="switchTab('form')">📝 Isi Laporan</button>
+      <button class="tab" data-tab="list" onclick="switchTab('list')">📋 Daftar Laporan</button>
+      <button class="tab admin-only" data-tab="admin" onclick="switchTab('admin')">⚙️ Panel Admin</button>
+    </div>
+
+    <div id="tab-form" class="tab-content">
+      <div class="card">
+        <h3>📝 Form Laporan Pekerjaan</h3>
+        <div id="formAlert" class="alert"></div>
+        <div class="grid-2">
+          <div class="form-group"><label>Tanggal *</label><input type="date" id="fTanggal"></div>
+          <div class="form-group"><label>Jenis Pekerjaan *</label><select id="fJenis"></select></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group"><label>Lokasi / Unit *</label><input type="text" id="fLokasi" placeholder="Contoh: Panel A, Line 3"></div>
+          <div class="form-group"><label>Nama Teknisi *</label><input type="text" id="fTeknisi" placeholder="Nama yang mengerjakan"></div>
+        </div>
+        <div class="form-group"><label>Deskripsi Pekerjaan *</label><textarea id="fDeskripsi" placeholder="Jelaskan pekerjaan yang dilakukan..."></textarea></div>
+        <div class="form-group"><label>Spare Part / Material</label><textarea id="fSparepart" placeholder="Contoh: Bearing 6204 (2 pcs)"></textarea></div>
+        <div class="grid-2">
+          <div class="form-group"><label>Status *</label>
+            <select id="fStatus"><option>Selesai</option><option>Dalam Proses</option><option>Pending</option></select>
+          </div>
+          <div class="form-group"><label>Durasi (jam)</label><input type="number" id="fDurasi" placeholder="2.5" step="0.5"></div>
+        </div>
+        <div class="form-group"><label>Catatan Tambahan</label><textarea id="fCatatan" placeholder="Catatan atau kendala..."></textarea></div>
+        <button class="btn btn-success btn-block" onclick="submitLaporan()">💾 Kirim Laporan</button>
+      </div>
+    </div>
+
+    <div id="tab-list" class="tab-content hidden">
+      <div class="stats" id="statsBox"></div>
+      <div class="card">
+        <h3>📋 Daftar Laporan</h3>
+        <div class="form-group"><input type="text" id="searchBox" placeholder="🔍 Cari laporan..." oninput="renderList()"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tgl</th><th>Jenis</th><th>Lokasi</th><th>Teknisi</th><th>Status</th><th>Pelapor</th><th class="admin-only">Aksi</th></tr></thead>
+            <tbody id="listBody"></tbody>
+          </table>
+        </div>
+        <div id="listEmpty" class="empty hidden">📭 Belum ada laporan</div>
+      </div>
+    </div>
+
+    <div id="tab-admin" class="tab-content hidden">
+      <div class="grid-3">
+        <div class="card">
+          <h3>🔧 Jenis Pekerjaan</h3>
+          <div class="form-group"><input type="text" id="newJenis" placeholder="Jenis baru..."></div>
+          <button class="btn btn-primary btn-block" onclick="addJenis()">+ Tambah</button>
+          <div id="jenisList" style="margin-top:15px;"></div>
+        </div>
+        <div class="card">
+          <h3>👥 Daftar Teknisi</h3>
+          <div class="form-group"><input type="text" id="newTeknisi" placeholder="Nama teknisi..."></div>
+          <button class="btn btn-primary btn-block" onclick="addTeknisi()">+ Tambah</button>
+          <div id="teknisiList" style="margin-top:15px;"></div>
+        </div>
+        <div class="card">
+          <h3>⚙️ Pengaturan</h3>
+          <div class="form-group"><label>Nama Perusahaan</label><input type="text" id="setCompany"></div>
+          <div class="form-group"><label>Password Admin Baru</label><input type="text" id="setPass" placeholder="Password baru"></div>
+          <button class="btn btn-primary btn-block" onclick="saveSettings()">💾 Simpan</button>
+          <hr style="margin:15px 0; border:none; border-top:1px solid #e5e7eb;">
+          <button class="btn btn-warning btn-block" onclick="exportCSV()" style="margin-bottom:8px;">📥 Export CSV</button>
+          <button class="btn btn-danger btn-block" onclick="resetAll()">🗑️ Reset Semua Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+  set(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+};
+
+let state = {
+  user: null,
+  isAdmin: false,
+  jenis: DB.get('rm_jenis', ['Perbaikan Mesin','Perawatan Rutin','Perbaikan Listrik','Instalasi','Inspeksi','Pengecekan']),
+  teknisi: DB.get('rm_teknisi', []),
+  laporan: DB.get('rm_laporan', []),
+  settings: DB.get('rm_settings', { company: 'Repair & Maintenance Job', password: 'admin123' })
+};
+
+function login() {
+  const name = document.getElementById('loginName').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const alertBox = document.getElementById('loginAlert');
+  if (!name) return showAlert(alertBox, 'Nama harus diisi!', 'error');
+  if (pass === '') {
+    state.user = name; state.isAdmin = false; showApp();
+  } else if (pass === state.settings.password) {
+    state.user = name; state.isAdmin = true; showApp();
+  } else {
+    showAlert(alertBox, 'Password admin salah!', 'error');
+  }
+}
+
+function logout() {
+  if (!confirm('Yakin ingin logout?')) return;
+  state.user = null; state.isAdmin = false;
+  document.getElementById('loginPage').classList.remove('hidden');
+  document.getElementById('appPage').classList.add('hidden');
+  document.getElementById('loginPass').value = '';
+}
+
+function showApp() {
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('appPage').classList.remove('hidden');
+  document.getElementById('hdrName').textContent = state.user;
+  document.getElementById('hdrRole').textContent = state.isAdmin ? 'ADMIN' : 'USER';
+  document.getElementById('hdrRole').style.background = state.isAdmin ? '#f59e0b' : 'rgba(255,255,255,0.2)';
+  document.getElementById('hdrTitle').textContent = state.settings.company;
+  document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !state.isAdmin));
+  document.getElementById('fTanggal').value = new Date().toISOString().split('T')[0];
+  refreshDropdowns(); renderList(); renderAdminLists(); switchTab('form');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  if (tab === 'list') renderList();
+  if (tab === 'admin') renderAdminLists();
+}
+
+function refreshDropdowns() {
+  const opts = state.jenis.map(j => `<option value="${j}">${j}</option>`).join('');
+  document.getElementById('fJenis').innerHTML = opts;
+}
+
+function submitLaporan() {
+  const alertBox = document.getElementById('formAlert');
+  const data = {
+    id: Date.now(),
+    tanggal: document.getElementById('fTanggal').value,
+    jenis: document.getElementById('fJenis').value,
+    lokasi: document.getElementById('fLokasi').value.trim(),
+    teknisi: document.getElementById('fTeknisi').value.trim(),
+    deskripsi: document.getElementById('fDeskripsi').value.trim(),
+    sparepart: document.getElementById('fSparepart').value.trim(),
+    status: document.getElementById('fStatus').value,
+    durasi: document.getElementById('fDurasi').value,
+    catatan: document.getElementById('fCatatan').value.trim(),
+    pelapor: state.user,
+    createdAt: new Date().toISOString()
+  };
+  if (!data.tanggal || !data.lokasi || !data.teknisi || !data.deskripsi)
+    return showAlert(alertBox, '⚠️ Lengkapi field bertanda * !', 'error');
+  state.laporan.unshift(data);
+  DB.set('rm_laporan', state.laporan);
+  ['fLokasi','fTeknisi','fDeskripsi','fSparepart','fDurasi','fCatatan'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fTanggal').value = new Date().toISOString().split('T')[0];
+  showAlert(alertBox, '✅ Laporan berhasil dikirim!', 'success');
+  renderList();
+}
+
+function renderList() {
+  const search = (document.getElementById('searchBox')?.value || '').toLowerCase();
+  let data = state.laporan;
+  if (!state.isAdmin) data = data.filter(l => l.pelapor === state.user);
+  if (search) data = data.filter(l => JSON.stringify(l).toLowerCase().includes(search));
+  const tbody = document.getElementById('listBody');
+  const empty = document.getElementById('listEmpty');
+  if (data.length === 0) {
+    tbody.innerHTML = ''; empty.classList.remove('hidden');
+  } else {
+    empty.classList.add('hidden');
+    tbody.innerHTML = data.map(l => `
+      <tr>
+        <td>${l.tanggal}</td><td><strong>${l.jenis}</strong></td><td>${l.lokasi}</td>
+        <td>${l.teknisi}</td>
+        <td><span class="status status-${l.status.split(' ')[0]}">${l.status}</span></td>
+        <td>${l.pelapor}</td>
+        <td class="admin-only ${state.isAdmin ? '' : 'hidden'}">
+          <button class="btn btn-primary btn-sm" onclick="openEdit(${l.id})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="hapusLaporan(${l.id})">🗑️</button>
+        </td>
+      </tr>`).join('');
+  }
+  renderStats();
+}
+
+function renderStats() {
+  let data = state.laporan;
+  if (!state.isAdmin) data = data.filter(l => l.pelapor === state.user);
+  document.getElementById('statsBox').innerHTML = `
+    <div class="stat-card"><div class="num">${data.length}</div><div class="lbl">Total</div></div>
+    <div class="stat-card"><div class="num" style="color:#10b981">${data.filter(l=>l.status==='Selesai').length}</div><div class="lbl">Selesai</div></div>
+    <div class="stat-card"><div class="num" style="color:#f59e0b">${data.filter(l=>l.status==='Dalam Proses').length}</div><div class="lbl">Proses</div></div>
+    <div class="stat-card"><div class="num" style="color:#ef4444">${data.filter(l=>l.status==='Pending').length}</div><div class="lbl">Pending</div></div>`;
+}
+
+function openEdit(id) {
+  if (!state.isAdmin) return;
+  const l = state.laporan.find(x => x.id === id);
+  if (!l) return;
+  const nJ = prompt('Jenis Pekerjaan:', l.jenis); if (nJ === null) return;
+  const nL = prompt('Lokasi:', l.lokasi); if (nL === null) return;
+  const nT = prompt('Teknisi:', l.teknisi); if (nT === null) return;
+  const nD = prompt('Deskripsi:', l.deskripsi); if (nD === null) return;
+  const nS = prompt('Status (Selesai / Dalam Proses / Pending):', l.status); if (nS === null) return;
+  const nC = prompt('Catatan:', l.catatan); if (nC === null) return;
+  l.jenis = nJ; l.lokasi = nL; l.teknisi = nT; l.deskripsi = nD; l.status = nS; l.catatan = nC;
+  DB.set('rm_laporan', state.laporan);
+  renderList();
+  showGlobalAlert('✅ Laporan diupdate!', 'success');
+}
+
+function hapusLaporan(id) {
+  if (!state.isAdmin) return;
+  if (!confirm('Yakin hapus laporan ini?')) return;
+  state.laporan = state.laporan.filter(x => x.id !== id);
+  DB.set('rm_laporan', state.laporan);
+  renderList();
+  showGlobalAlert('🗑️ Laporan dihapus', 'info');
+}
+
+function addJenis() {
+  if (!state.isAdmin) return;
+  const v = document.getElementById('newJenis').value.trim();
+  if (!v) return;
+  if (state.jenis.includes(v)) return showGlobalAlert('Jenis sudah ada!', 'error');
+  state.jenis.push(v); DB.set('rm_jenis', state.jenis);
+  document.getElementById('newJenis').value = '';
+  renderAdminLists(); refreshDropdowns();
+}
+function delJenis(i) {
+  if (!confirm('Hapus jenis ini?')) return;
+  state.jenis.splice(i, 1); DB.set('rm_jenis', state.jenis);
+  renderAdminLists(); refreshDropdowns();
+}
+function addTeknisi() {
+  const v = document.getElementById('newTeknisi').value.trim();
+  if (!v) return;
+  if (state.teknisi.includes(v)) return showGlobalAlert('Teknisi sudah ada!', 'error');
+  state.teknisi.push(v); DB.set('rm_teknisi', state.teknisi);
+  document.getElementById('newTeknisi').value = '';
+  renderAdminLists();
+}
+function delTeknisi(i) {
+  if (!confirm('Hapus teknisi ini?')) return;
+  state.teknisi.splice(i, 1); DB.set('rm_teknisi', state.teknisi);
+  renderAdminLists();
+}
+
+function renderAdminLists() {
+  if (!state.isAdmin) return;
+  document.getElementById('jenisList').innerHTML = state.jenis.map((j, i) => `
+    <div class="list-item"><span>${j}</span>
+    <button class="btn btn-danger btn-sm" onclick="delJenis(${i})">✕</button></div>`).join('')
+    || '<p style="color:#9ca3af; font-size:12px;">Belum ada data</p>';
+  document.getElementById('teknisiList').innerHTML = state.teknisi.map((t, i) => `
+    <div class="list-item"><span>${t}</span>
+    <button class="btn btn-danger btn-sm" onclick="delTeknisi(${i})">✕</button></div>`).join('')
+    || '<p style="color:#9ca3af; font-size:12px;">Belum ada data</p>';
+  document.getElementById('setCompany').value = state.settings.company;
+  document.getElementById('setPass').value = '';
+}
+
+function saveSettings() {
+  if (!state.isAdmin) return;
+  const c = document.getElementById('setCompany').value.trim();
+  const p = document.getElementById('setPass').value.trim();
+  if (c) state.settings.company = c;
+  if (p) state.settings.password = p;
+  DB.set('rm_settings', state.settings);
+  document.getElementById('hdrTitle').textContent = state.settings.company;
+  document.getElementById('setPass').value = '';
+  showGlobalAlert('✅ Pengaturan disimpan!', 'success');
+}
+
+function exportCSV() {
+  if (state.laporan.length === 0) return showGlobalAlert('Tidak ada data', 'error');
+  const headers = ['Tanggal','Jenis','Lokasi','Teknisi','Deskripsi','Spare Part','Status','Durasi','Catatan','Pelapor'];
+  const rows = state.laporan.map(l => [l.tanggal,l.jenis,l.lokasi,l.teknisi,l.deskripsi,l.sparepart,l.status,l.durasi,l.catatan,l.pelapor]
+    .map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `laporan_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+function resetAll() {
+  if (!confirm('⚠️ HAPUS SEMUA DATA?')) return;
+  if (!confirm('Konfirmasi terakhir?')) return;
+  localStorage.clear(); location.reload();
+}
+
+function showAlert(el, msg, type) {
+  el.className = 'alert alert-' + type + ' show';
+  el.textContent = msg;
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+function showGlobalAlert(msg, type) {
+  showAlert(document.getElementById('globalAlert'), msg, type);
+}
+
+document.getElementById('loginPass').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
+document.getElementById('loginName').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('loginPass').focus(); });
+</script>
+</body>
+        </html>
